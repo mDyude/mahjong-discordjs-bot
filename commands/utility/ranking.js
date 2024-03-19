@@ -4,7 +4,7 @@ const { GAME_URL, PLAYER_URL, TEST_GAME_URL, TEST_PLAYER_URL } = require('../../
 
 let rawPlayerData;
 let playerdata;
-let replyString = "排名\n";
+let replyString = "";
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -35,15 +35,18 @@ module.exports = {
             components: [row],
         });
 
-        const collectorFilter = i => i.user.id === interaction.user.id;
-        const confirmation = await response.awaitMessageComponent({ filter: collectorFilter, time: 60_000 });
 
         try {
+            const collectorFilter = i => i.user.id === interaction.user.id;
+            const confirmation = await response.awaitMessageComponent({ filter: collectorFilter, time: 60_000 });
+    
             let res;
             if (confirmation.values[0] === '2') {
                 res = await axios.get(PLAYER_URL)
+                replyString = "第二赛季排名\n";
             } else {
                 res = await axios.get(`${PLAYER_URL}/s1`)
+                replyString = "第一赛季排名\n";
             }
             // console.log(res.data.data);
             rawPlayerData = res.data.data;
@@ -57,15 +60,18 @@ module.exports = {
             });
             // console.log(rawPlayerData);
             // console.log(playerdata);
+            replyString += `排名    名字    场数    分数    \n`;
             playerdata.forEach((player) => {
-                replyString += `排名: ${player.rank} 名字: ${player.name} 场数: ${player.gamesPlayed} 分数: ${player.totalScore}\n`;
+                replyString += `${player.rank}  ${player.name}  ${player.gamesPlayed}   ${player.totalScore}\n`;
             });
-            await interaction.editReply(`${replyString}`);
-            replyString = "排名\n";
+            await interaction.followUp(`${replyString}`);
+            replyString = "";
+            await interaction.deleteReply();
+
 
         } catch (error) {
             console.error(error);
-            await interaction.editReply({ content: 'Confirmation not received within 1 minute, cancelling', components: [] });
+            await interaction.followUp({ content: 'Confirmation not received within 1 minute, cancelling', components: [] });
         }
     },
 }
