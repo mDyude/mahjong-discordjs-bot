@@ -1,6 +1,9 @@
 const axios = require('axios');
 const { ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, SlashCommandBuilder } = require('discord.js');
-const { GAME_URL, PLAYER_URL, TEST_GAME_URL, TEST_PLAYER_URL } = require('../../config.json');
+require('dotenv').config();
+
+const GAME_URL = process.env.GAME_URL;
+const PLAYER_URL = process.env.PLAYER_URL;
 
 let rawPlayerData;
 let playerdata;
@@ -62,7 +65,7 @@ module.exports = {
             // console.log(playerdata);
             replyString += `排名    名字    场数    分数    \n`;
             playerdata.forEach((player) => {
-                replyString += `${player.rank}  ${player.name}  ${player.gamesPlayed}   ${player.totalScore}\n`;
+                replyString += `${player.rank}        ${player.name}          ${player.gamesPlayed}        ${player.totalScore}\n`;
             });
             await interaction.followUp(`${replyString}`);
             replyString = "";

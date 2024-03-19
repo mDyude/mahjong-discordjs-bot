@@ -1,14 +1,15 @@
 // The fs module is Node's native file system module. 
 // fs is used to read the commands directory and identify our command files.
 const fs = require('node:fs');
+require('dotenv').config();
 
 // The path module is Node's native path utility module. 
 // path helps construct paths to access files and directories
 const path = require('node:path');
 
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
-const { token } = require('./config.json');
 
+const token = process.env.TOKEN;
 
 // Create a new client instance
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
