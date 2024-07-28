@@ -2,11 +2,10 @@ const axios = require('axios');
 const { ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, SlashCommandBuilder } = require('discord.js');
 require('dotenv').config();
 
-const GAME_URL = process.env.GAME_URL;
 const PLAYER_URL = process.env.PLAYER_URL;
 
-let rawPlayerData;
-let playerdata;
+const fetchRanking = require("../../actions/fetchRanking.js");
+
 let replyString = "";
 
 module.exports = {
@@ -21,12 +20,10 @@ module.exports = {
                 new StringSelectMenuOptionBuilder()
                     .setLabel('第一赛季')
                     .setValue('1')
-                    .setDescription('第一赛季排名')
                     .setEmoji('1️⃣'),
                 new StringSelectMenuOptionBuilder()
                     .setLabel('第二赛季')
                     .setValue('2')
-                    .setDescription('第二赛季排名')
                     .setEmoji('2️⃣'),
             );
 
@@ -38,35 +35,21 @@ module.exports = {
             components: [row],
         });
 
-
         try {
             const collectorFilter = i => i.user.id === interaction.user.id;
             const confirmation = await response.awaitMessageComponent({ filter: collectorFilter, time: 60_000 });
     
             let res;
             if (confirmation.values[0] === '2') {
-                res = await axios.get(PLAYER_URL)
-                replyString = "第二赛季排名\n";
+                res = await fetchRanking(PLAYER_URL);
+                replyString = "第二赛季排名\n" + res;
+            } else if (confirmation.values[0] === '1') {
+                res = await fetchRanking(`${PLAYER_URL}/s1`);
+                replyString = "第一赛季排名\n" + res;
             } else {
-                res = await axios.get(`${PLAYER_URL}/s1`)
-                replyString = "第一赛季排名\n";
+                throw new Error('Invalid value');
             }
-            // console.log(res.data.data);
-            rawPlayerData = res.data.data;
-            playerdata = rawPlayerData.map((player) => {
-                return {
-                    rank: player.rank,
-                    name: player.name,
-                    gamesPlayed: player.gamesPlayed.toLocaleString(),
-                    totalScore: (Math.round(player.totalScore * 10) / 10).toLocaleString(),
-                };
-            });
-            // console.log(rawPlayerData);
-            // console.log(playerdata);
-            replyString += `排名    名字    场数    分数    \n`;
-            playerdata.forEach((player) => {
-                replyString += `${player.rank}        ${player.name}          ${player.gamesPlayed}        ${player.totalScore}\n`;
-            });
+
             await interaction.followUp(`${replyString}`);
             replyString = "";
             await interaction.deleteReply();
