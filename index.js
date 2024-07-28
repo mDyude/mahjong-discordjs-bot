@@ -21,7 +21,13 @@ const token = process.env.TOKEN;
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 client.commands = new Collection();
 
-app.use((cors()));
+// app.use((cors()));
+app.use(function (req, res, next) {
+	res.header("Access-Control-Allow-Origin", "https://mahjong680.club/"); // update to match the domain you will make the request from
+	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+	next();
+});
+
 app.use(express.json());
 app.use('/api', generalRoutes, async (req, res) => {
 	try {
@@ -30,7 +36,7 @@ app.use('/api', generalRoutes, async (req, res) => {
 			const channel = client.channels.cache.get(announceChannelID);
 			sendMsg = await fetchRanking(PLAYER_URL);
 			await channel.send(`🀄️🀄️🀄️🀄️新玩家已更新🀄️🀄️🀄️🀄️：\n${sendMsg}`);
-	
+
 			console.log("Players Updated");
 			res.status(200).json(req.body);
 
@@ -42,13 +48,13 @@ app.use('/api', generalRoutes, async (req, res) => {
 
 			console.log("Games Updated");
 			console.log(announceString);
-			
+
 			const channel = client.channels.cache.get(announceChannelID);
 			await channel.send(`🀄️🀄️🀄️🀄️对局已更新🀄️🀄️🀄️🀄️：\n${announceString}`);
 
 			sendMsg = await fetchRanking(PLAYER_URL);
 			await channel.send(`🀄️🀄️🀄️🀄️更新后最新排名🀄️🀄️🀄️🀄️：\n${sendMsg}`);
-	
+
 			console.log("Players Updated");
 
 			// send the latest game added to the announcement channel
@@ -58,7 +64,7 @@ app.use('/api', generalRoutes, async (req, res) => {
 			console.log("Hello from Yui");
 			res.status(404).json({ message: "No data found" });
 		}
-	
+
 	} catch (error) {
 		console.error(`error in generalRoutes: ${error}`);
 		res.status(500).json({ message: "Error" });
