@@ -23,7 +23,7 @@ client.commands = new Collection();
 
 app.use((cors()));
 app.use(express.json());
-app.use('/api', generalRoutes, async (req, res) => {
+app.use('/', generalRoutes, async (req, res) => {
 	try {
 		if (req.body.message === "Players Updated") {
 			// send message to the announcement channel
