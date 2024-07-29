@@ -10,7 +10,6 @@ const generalRoutes = require('./routes/generalRoutes.js');
 const fetchRanking = require("./actions/fetchRanking.js");
 const PLAYER_URL = process.env.PLAYER_URL;
 const announceChannelID = process.env.ANNOUNCEMENT_CHANNEL_ID;
-const cors = require("cors");
 
 // The path module is Node's native path utility module. 
 // path helps construct paths to access files and directories
@@ -22,13 +21,7 @@ const token = process.env.TOKEN;
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 client.commands = new Collection();
 
-const corsOptions ={
-   origin:'*', 
-   credentials:true,            //access-control-allow-credentials:true
-   optionSuccessStatus:200,
-}
-
-app.use(cors(corsOptions)) // Use this after the variable declaration
+app.use((cors()));
 app.use(express.json());
 app.use('/api', generalRoutes, async (req, res) => {
 	try {
@@ -37,7 +30,7 @@ app.use('/api', generalRoutes, async (req, res) => {
 			const channel = client.channels.cache.get(announceChannelID);
 			sendMsg = await fetchRanking(PLAYER_URL);
 			await channel.send(`🀄️🀄️🀄️🀄️新玩家已更新🀄️🀄️🀄️🀄️：\n${sendMsg}`);
-
+	
 			console.log("Players Updated");
 			res.status(200).json(req.body);
 
@@ -49,13 +42,13 @@ app.use('/api', generalRoutes, async (req, res) => {
 
 			console.log("Games Updated");
 			console.log(announceString);
-
+			
 			const channel = client.channels.cache.get(announceChannelID);
 			await channel.send(`🀄️🀄️🀄️🀄️对局已更新🀄️🀄️🀄️🀄️：\n${announceString}`);
 
 			sendMsg = await fetchRanking(PLAYER_URL);
 			await channel.send(`🀄️🀄️🀄️🀄️更新后最新排名🀄️🀄️🀄️🀄️：\n${sendMsg}`);
-
+	
 			console.log("Players Updated");
 
 			// send the latest game added to the announcement channel
@@ -65,7 +58,7 @@ app.use('/api', generalRoutes, async (req, res) => {
 			console.log("Hello from Yui");
 			res.status(404).json({ message: "No data found" });
 		}
-
+	
 	} catch (error) {
 		console.error(`error in generalRoutes: ${error}`);
 		res.status(500).json({ message: "Error" });
