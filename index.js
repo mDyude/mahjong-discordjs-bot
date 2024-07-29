@@ -45,13 +45,13 @@ app.use('/', generalRoutes, async (req, res) => {
 			// announceString += "```\n";
 			var table =
 				new AsciiTable3()
-					.setHeading('顺位', '玩家', '座位', '分数')
-					.setAligns([AlignmentEnum.LEFT, AlignmentEnum.CENTER, AlignmentEnum.CENTER, AlignmentEnum.RIGHT])
+					.setHeading('座位', '玩家', '分数')
+					.setAligns([AlignmentEnum.LEFT, AlignmentEnum.CENTER, AlignmentEnum.RIGHT])
 					.addRowMatrix([
-						[req.body.gameData[0].rank, req.body.gameData[0].playerName, req.body.gameData[0].direction, req.body.gameData[0].score],
-						[req.body.gameData[1].rank, req.body.gameData[1].playerName, req.body.gameData[1].direction, req.body.gameData[1].score],
-						[req.body.gameData[2].rank, req.body.gameData[2].playerName, req.body.gameData[2].direction, req.body.gameData[2].score],
-						[req.body.gameData[3].rank, req.body.gameData[3].playerName, req.body.gameData[3].direction, req.body.gameData[3].score]
+						[req.body.gameData[0].direction, req.body.gameData[0].playerName, req.body.gameData[0].score],
+						[req.body.gameData[1].direction, req.body.gameData[1].playerName, req.body.gameData[1].score],
+						[req.body.gameData[2].direction, req.body.gameData[2].playerName, req.body.gameData[2].score],
+						[req.body.gameData[3].direction, req.body.gameData[3].playerName, req.body.gameData[3].score]
 					]);
 
 			console.log(table.toString());
