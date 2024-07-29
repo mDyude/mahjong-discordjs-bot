@@ -10,6 +10,7 @@ const generalRoutes = require('./routes/generalRoutes.js');
 const fetchRanking = require("./actions/fetchRanking.js");
 const PLAYER_URL = process.env.PLAYER_URL;
 const announceChannelID = process.env.ANNOUNCEMENT_CHANNEL_ID;
+const cors = require("cors");
 
 // The path module is Node's native path utility module. 
 // path helps construct paths to access files and directories
@@ -21,13 +22,13 @@ const token = process.env.TOKEN;
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 client.commands = new Collection();
 
-// app.use((cors()));
-app.use(function (req, res, next) {
-	res.header("Access-Control-Allow-Origin", "https://mahjong680.club/"); // update to match the domain you will make the request from
-	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-	next();
-});
+const corsOptions ={
+   origin:'*', 
+   credentials:true,            //access-control-allow-credentials:true
+   optionSuccessStatus:200,
+}
 
+app.use(cors(corsOptions)) // Use this after the variable declaration
 app.use(express.json());
 app.use('/api', generalRoutes, async (req, res) => {
 	try {
