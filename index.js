@@ -10,6 +10,7 @@ const generalRoutes = require('./routes/generalRoutes.js');
 const fetchRanking = require("./actions/fetchRanking.js");
 const PLAYER_URL = process.env.PLAYER_URL;
 const announceChannelID = process.env.ANNOUNCEMENT_CHANNEL_ID;
+var { AsciiTable3, AlignmentEnum } = require('ascii-table3');
 
 // The path module is Node's native path utility module. 
 // path helps construct paths to access files and directories
@@ -29,26 +30,44 @@ app.use('/', generalRoutes, async (req, res) => {
 			// send message to the announcement channel
 			const channel = client.channels.cache.get(announceChannelID);
 			sendMsg = await fetchRanking(PLAYER_URL);
-			await channel.send(`🀄️🀄️🀄️🀄️新玩家已更新🀄️🀄️🀄️🀄️：\n${sendMsg}`);
-	
+
+			await channel.send(`# 🀄️🀄️🀄️🀄️新玩家已更新🀄️🀄️🀄️🀄️：\n${sendMsg}`);
+
 			console.log("Players Updated");
 			res.status(200).json(req.body);
 
 		} else if (req.body.message === "Games Updated") {
-			announceString = "顺位        玩家        座位        分数\n";
-			req.body.gameData.forEach(scores => {
-				announceString += `${scores.rank}            ${scores.playerName}        ${scores.direction}        ${scores.score}\n`;
-			});
+			// announceString = "```顺位    玩家    座位    分数\n";
+			// req.body.gameData.forEach(scores => {
+			// 	announceString += `${scores.rank}    ${scores.playerName}    ${scores.direction}    ${scores.score}\n`;
+			// });
+
+			// announceString += "```\n";
+			var table =
+				new AsciiTable3()
+					.setHeading('顺位', '玩家', '座位', '分数')
+					.setAligns([AlignmentEnum.LEFT, AlignmentEnum.CENTER, AlignmentEnum.CENTER, AlignmentEnum.RIGHT])
+					.addRowMatrix([
+						[req.body.gameData[0].rank, req.body.gameData[0].playerName, req.body.gameData[0].direction, req.body.gameData[0].score],
+						[req.body.gameData[1].rank, req.body.gameData[1].playerName, req.body.gameData[1].direction, req.body.gameData[1].score],
+						[req.body.gameData[2].rank, req.body.gameData[2].playerName, req.body.gameData[2].direction, req.body.gameData[2].score],
+						[req.body.gameData[3].rank, req.body.gameData[3].playerName, req.body.gameData[3].direction, req.body.gameData[3].score]
+					]);
+
+			console.log(table.toString());
+			announceString = "```";
+			announceString += table.toString();
+			announceString += "```";
 
 			console.log("Games Updated");
 			console.log(announceString);
-			
+
 			const channel = client.channels.cache.get(announceChannelID);
-			await channel.send(`🀄️🀄️🀄️🀄️对局已更新🀄️🀄️🀄️🀄️：\n${announceString}`);
+			await channel.send(`## 🀄️ 对局已更新 🀄️：\n${announceString}`);
 
 			sendMsg = await fetchRanking(PLAYER_URL);
-			await channel.send(`🀄️🀄️🀄️🀄️更新后最新排名🀄️🀄️🀄️🀄️：\n${sendMsg}`);
-	
+			await channel.send(`## 🀄️ 更新后最新排名 🀄️：\n${sendMsg}`);
+
 			console.log("Players Updated");
 
 			// send the latest game added to the announcement channel
@@ -58,7 +77,7 @@ app.use('/', generalRoutes, async (req, res) => {
 			console.log("Hello from Yui");
 			res.status(404).json({ message: "No data found" });
 		}
-	
+
 	} catch (error) {
 		console.error(`error in generalRoutes: ${error}`);
 		res.status(500).json({ message: "Error" });

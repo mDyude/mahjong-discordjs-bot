@@ -1,4 +1,5 @@
 const axios = require('axios');
+var { AsciiTable3, AlignmentEnum } = require('ascii-table3');
 
 const fetchRanking = async (url) => {
     res = await axios.get(url);
@@ -14,11 +15,30 @@ const fetchRanking = async (url) => {
     });
     // console.log(rawPlayerData);
     // console.log(playerdata);
-    replyString = "排名    场数    名字    分数    \n\n";
-    playerdata.forEach((player) => {
-        replyString += `${player.rank}          ${player.gamesPlayed}        ${player.name}        ${player.totalScore}\n`;
-    });
 
+    var row = [];
+    for (let i = 0; i < playerdata.length; i++) {
+        let player = playerdata[i];
+        row.push([player.rank, player.name, player.gamesPlayed, player.totalScore]);
+    }
+
+    // create table
+    var table =
+        new AsciiTable3()
+            .setHeading('排名', '玩家', '场数', '分数')
+            .setAligns([AlignmentEnum.LEFT, AlignmentEnum.CENTER, AlignmentEnum.CENTER, AlignmentEnum.RIGHT])
+            .addRowMatrix(row);
+
+    console.log(table.toString());
+
+    // replyString = "```排名    玩家    场数    分数\n";
+    // playerdata.forEach((player) => {
+    //     replyString += player.rank + "      " + player.name + "    " + player.gamesPlayed + "    " + player.totalScore + "\n";
+    // });
+
+    replyString = "```";
+    replyString += table.toString();
+    replyString += "```";
     return replyString;
 }
 
