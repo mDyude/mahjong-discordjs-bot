@@ -25,6 +25,11 @@ module.exports = {
                     .setLabel('第二赛季')
                     .setValue('2')
                     .setEmoji('2️⃣'),
+                new StringSelectMenuOptionBuilder()
+                    .setLabel('第三赛季')
+                    .setValue('3')
+                    .setEmoji('3️⃣'),
+
             );
 
         const row = new ActionRowBuilder()
@@ -38,14 +43,17 @@ module.exports = {
         try {
             const collectorFilter = i => i.user.id === interaction.user.id;
             const confirmation = await response.awaitMessageComponent({ filter: collectorFilter, time: 60_000 });
-    
+
             let res;
-            if (confirmation.values[0] === '2') {
+            if (confirmation.values[0] === '3') {
                 res = await fetchRanking(PLAYER_URL);
-                replyString = "第二赛季排名\n" + res;
+                replyString = "第三赛季排名\n" + res;
             } else if (confirmation.values[0] === '1') {
                 res = await fetchRanking(`${PLAYER_URL}/s1`);
                 replyString = "第一赛季排名\n" + res;
+            } else if (confirmation.values[0] === '2') {
+                res = await fetchRanking(`${PLAYER_URL}/s2`);
+                replyString = "第二赛季排名\n" + res;
             } else {
                 throw new Error('Invalid value');
             }
