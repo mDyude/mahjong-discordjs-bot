@@ -5,7 +5,8 @@ const PLAYER_URL = process.env.PLAYER_URL;
 // if the server receives a post request from the client - in this case the mahjogn backend 
 router.post("/", async (req, res, next) => {
     try {
-        const { message } = req.body;
+        console.log("received req", req.body);
+        const { message } = req.body.message;
         console.log(`received message: ${message}`);
         let resString;
 
@@ -14,7 +15,6 @@ router.post("/", async (req, res, next) => {
             // res.status(200).json({ message: "Hello from Yui. Players updated." });
             req.body.message = "Players Updated";
             console.log("Players Update");
-            next();
         }
 
         else if (message === "Games Updated") {

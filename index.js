@@ -11,6 +11,7 @@ const fetchRanking = require("./actions/fetchRanking.js");
 const PLAYER_URL = process.env.PLAYER_URL;
 const announceChannelID = process.env.ANNOUNCEMENT_CHANNEL_ID;
 var { AsciiTable3, AlignmentEnum } = require('ascii-table3');
+const direction = require('./utils/direction.js');
 
 // The path module is Node's native path utility module. 
 // path helps construct paths to access files and directories
@@ -43,15 +44,17 @@ app.use('/', generalRoutes, async (req, res) => {
 			// });
 
 			// announceString += "```\n";
+			console.log(req.body);
 			var table =
 				new AsciiTable3()
-					.setHeading('座位', '玩家', '分数')
-					.setAligns([AlignmentEnum.LEFT, AlignmentEnum.CENTER, AlignmentEnum.RIGHT])
+					.setHeading('座位', '玩家', '分数', '总分变化')
+					.setAlign(1, AlignmentEnum.CENTER)
+					.setAlign(3, AlignmentEnum.RIGHT)
 					.addRowMatrix([
-						[req.body.gameData[0].direction, req.body.gameData[0].playerName, req.body.gameData[0].score],
-						[req.body.gameData[1].direction, req.body.gameData[1].playerName, req.body.gameData[1].score],
-						[req.body.gameData[2].direction, req.body.gameData[2].playerName, req.body.gameData[2].score],
-						[req.body.gameData[3].direction, req.body.gameData[3].playerName, req.body.gameData[3].score]
+						[direction(req.body.gameData[0].direction), req.body.gameData[0].playerName, req.body.gameData[0].score, req.body.gameData[0].pointsDiff],
+						[direction(req.body.gameData[1].direction), req.body.gameData[1].playerName, req.body.gameData[1].score, req.body.gameData[1].pointsDiff],
+						[direction(req.body.gameData[2].direction), req.body.gameData[2].playerName, req.body.gameData[2].score, req.body.gameData[2].pointsDiff],
+						[direction(req.body.gameData[3].direction), req.body.gameData[3].playerName, req.body.gameData[3].score, req.body.gameData[3].pointsDiff]
 					]);
 
 			console.log(table.toString());

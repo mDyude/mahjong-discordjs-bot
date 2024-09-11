@@ -13,8 +13,8 @@ const fetchRanking = async (url) => {
             totalScore: (Math.round(player.totalScore * 10) / 10).toLocaleString(),
         };
     });
-    // console.log(rawPlayerData);
-    // console.log(playerdata);
+    console.log(rawPlayerData);
+    console.log(playerdata);
 
     var row = [];
     for (let i = 0; i < playerdata.length; i++) {
