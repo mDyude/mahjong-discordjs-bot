@@ -47,7 +47,7 @@ app.use('/', generalRoutes, async (req, res) => {
 			console.log(req.body);
 			var table =
 				new AsciiTable3()
-					.setHeading('座位', '玩家', '分数', '总分变化')
+					.setHeading('座位', '玩家', '分数', '变化')
 					.setAlign(1, AlignmentEnum.CENTER)
 					.setAlign(3, AlignmentEnum.RIGHT)
 					.addRowMatrix([
