@@ -29,6 +29,10 @@ module.exports = {
                     .setLabel('第三赛季')
                     .setValue('3')
                     .setEmoji('3️⃣'),
+                new StringSelectMenuOptionBuilder()
+                    .setLabel('第四赛季')
+                    .setValue('4')
+                    .setEmoji('4️⃣'),
 
             );
 
@@ -45,15 +49,18 @@ module.exports = {
             const confirmation = await response.awaitMessageComponent({ filter: collectorFilter, time: 60_000 });
 
             let res;
-            if (confirmation.values[0] === '3') {
+            if (confirmation.values[0] === '4') {
                 res = await fetchRanking(PLAYER_URL);
-                replyString = "第三赛季排名\n" + res;
+                replyString = "第四赛季排名\n" + res;
             } else if (confirmation.values[0] === '1') {
                 res = await fetchRanking(`${PLAYER_URL}/s1`);
                 replyString = "第一赛季排名\n" + res;
             } else if (confirmation.values[0] === '2') {
                 res = await fetchRanking(`${PLAYER_URL}/s2`);
                 replyString = "第二赛季排名\n" + res;
+            } else if (confirmation.values[0] === '3') {
+                res = await fetchRanking(`${PLAYER_URL}/s3`);
+                replyString = "第三赛季排名\n" + res;
             } else {
                 throw new Error('Invalid value');
             }
